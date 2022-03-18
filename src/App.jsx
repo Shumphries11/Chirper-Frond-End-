@@ -1,39 +1,82 @@
 import React, { useState } from "react";
 import Chirps from "./components/Chirps";
+import Header from "./components/Header";
+import { v4 as uuidv4 } from 'uuid';
+import moment from "moment";
+
 
 const App = () => {
+    const [chirps, setChirps] = useState([
+        {
+            id: uuidv4(),
+            username: "Santita",
+            message: "Hello, how are you",
+            posted: moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+        },
+        {
+            id: uuidv4(),
+            username: "Tristan",
+            message: "What's up",
+            posted: moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+
+        },
+        {
+            id: uuidv4(),
+            username: "James",
+            message: "Hi!",
+            posted: moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+
+        }
+    ])
+
     const [newMessages, setNewMessages] = useState('');
-    const [post, setPost] = useState([]);
+    const [username, setUsername] = useState('');
 
     const handleMessageChange = (e) => {
         setNewMessages(e.target.value);
     }
 
+    const handleInputChange = e => {
+        setUsername(e.target.value);
+    }
+
     const handleClickButton = (e) => {
         e.preventDefault();
 
-        const data = newMessages;
+        const newChirp = {
+            id: uuidv4(),
+            username: username,
+            message: newMessages,
+            posted: moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
 
-        if (newMessages) {
-            setPost((msg) => [...msg, data]);
-            setNewMessages('');
-        }
+        };
+
+        setChirps([...chirps, newChirp]);
+        setNewMessages('');
+        setUsername('');
 
 
         console.log(e);
     }
+
+
     return (
-        <div>
-
-            <form className="border border-dark col-md-4 p-4 m-3 bg-color" onSubmit={handleClickButton}>
-
+        <>
+            <Header title='Chirper' />
+            
+            <form className="border border-dark col-md-4 p-4 m-3" onSubmit={handleClickButton}>
+                <input className="m-3" value={username} onChange={handleInputChange} />
                 <div className="form-group text-center">
-                     <textarea
-                     className="p-3 "
-                     name="newMessage" value={newMessages} onChange={handleMessageChange} placeholder="Say Something" >
-                </textarea> 
+                    <textarea
+                        className=" form-control form-control-lg p-3 "
+                        rows='3'
+                        name="newMessage"
+                        value={newMessages}
+                        onChange={handleMessageChange}
+                        placeholder="Say Something" >
+                    </textarea>
                 </div>
-               
+
                 <div className="form-group text-center">
                     <button>Post Chirp</button>
                 </div>
@@ -41,23 +84,13 @@ const App = () => {
             </form>
 
 
-            <h3 className="border border-dark col-md-3 p-3 m-3"> <Chirps message='Hello' /></h3>
-            <h3 className="border border-dark col-md-3 p-3 m-3"> <Chirps message='Good Morning' /></h3>
-            <h3 className="border border-dark col-md-3 p-3 m-3"> <Chirps message='Hru?' /></h3>
-            {
-                post.map(text => {
-                    return <h3 className="border border-dark col-md-3 p-3 m-3">{text}</h3>
-                })
-            }
+            {chirps.map(chirp => (
+                <>
+                    <Chirps key={chirp.id} username={chirp.username} message={chirp.message} posted={chirp.posted} />
+                </>
+            ))}
 
-
-            
-
-
-
-
-
-        </div>
+        </>
     )
 }
 
